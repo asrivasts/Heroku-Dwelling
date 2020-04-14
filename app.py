@@ -2,6 +2,7 @@ from flask import Flask, jsonify, render_template
 from bs4 import BeautifulSoup as bs
 import requests
 import operator
+from config import dbkey
 
 import time
 import pandas as pd
@@ -19,7 +20,8 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     # Create connection variable
-    conn2 = 'mongodb://localhost:27017'
+    conn2 = f"mongodb://heroku_app:{dbkey}@dwelling-db-shard-00-00-yfzol.gcp.mongodb.net:27017,dwelling-db-shard-00-01-yfzol.gcp.mongodb.net:27017,dwelling-db-shard-00-02-yfzol.gcp.mongodb.net:27017/test?ssl=true&replicaSet=dwelling-db-shard-0&authSource=admin&retryWrites=true&w=majority"
+    print(conn2)
     city_names = []
     test = []
     # Pass connection to the pymongo instance.
@@ -27,7 +29,7 @@ def home():
 
     # Connect to a database. Will create one if not already available.
     db2 = client2.Dwelling_db
-    cities = db2.city_lat_lon.find()
+    cities = db2.city_muni.find()
 
     for x in cities:
         temp = {
@@ -45,7 +47,8 @@ def home():
 @app.route("/rr")
 def railroad():
     # Create connection variable
-    conn2 = 'mongodb://localhost:27017'
+    # conn2 = 'mongodb://localhost:27017'
+    conn2 = f"mongodb://heroku_app:{dbkey}@dwelling-db-shard-00-00-yfzol.gcp.mongodb.net:27017,dwelling-db-shard-00-01-yfzol.gcp.mongodb.net:27017,dwelling-db-shard-00-02-yfzol.gcp.mongodb.net:27017/test?ssl=true&replicaSet=dwelling-db-shard-0&authSource=admin&retryWrites=true&w=majority"
     listings = []
 
     # Pass connection to the pymongo instance.
@@ -61,7 +64,8 @@ def railroad():
 @app.route("/hs")
 def highSchool():
     # Create connection variable
-    conn2 = 'mongodb://localhost:27017'
+    # conn2 = 'mongodb://localhost:27017'
+    conn2 = f"mongodb://heroku_app:{dbkey}@dwelling-db-shard-00-00-yfzol.gcp.mongodb.net:27017,dwelling-db-shard-00-01-yfzol.gcp.mongodb.net:27017,dwelling-db-shard-00-02-yfzol.gcp.mongodb.net:27017/test?ssl=true&replicaSet=dwelling-db-shard-0&authSource=admin&retryWrites=true&w=majority"
     schools = []
 
     # Pass connection to the pymongo instance.
@@ -78,7 +82,8 @@ def highSchool():
 @app.route("/hsm/2019/<city>")
 def highSchoolMarkers(city):
     # Create connection variable
-    conn2 = 'mongodb://localhost:27017'
+    # conn2 = 'mongodb://localhost:27017'
+    conn2 = f"mongodb://heroku_app:{dbkey}@dwelling-db-shard-00-00-yfzol.gcp.mongodb.net:27017,dwelling-db-shard-00-01-yfzol.gcp.mongodb.net:27017,dwelling-db-shard-00-02-yfzol.gcp.mongodb.net:27017/test?ssl=true&replicaSet=dwelling-db-shard-0&authSource=admin&retryWrites=true&w=majority"
     schools = []
 
     # Pass connection to the pymongo instance.
@@ -94,7 +99,8 @@ def highSchoolMarkers(city):
 @app.route("/bstop")
 def busStops():
     # Create connection variable
-    conn2 = 'mongodb://localhost:27017'
+    # conn2 = 'mongodb://localhost:27017'
+    conn2 = f"mongodb://heroku_app:{dbkey}@dwelling-db-shard-00-00-yfzol.gcp.mongodb.net:27017,dwelling-db-shard-00-01-yfzol.gcp.mongodb.net:27017,dwelling-db-shard-00-02-yfzol.gcp.mongodb.net:27017/test?ssl=true&replicaSet=dwelling-db-shard-0&authSource=admin&retryWrites=true&w=majority"
     busStops = []
 
     # Pass connection to the pymongo instance.
@@ -110,7 +116,8 @@ def busStops():
 @app.route("/bs/<city>")
 def busStopsCity(city):
     # Create connection variable
-    conn2 = 'mongodb://localhost:27017'
+    # conn2 = 'mongodb://localhost:27017'
+    conn2 = f"mongodb://heroku_app:{dbkey}@dwelling-db-shard-00-00-yfzol.gcp.mongodb.net:27017,dwelling-db-shard-00-01-yfzol.gcp.mongodb.net:27017,dwelling-db-shard-00-02-yfzol.gcp.mongodb.net:27017/test?ssl=true&replicaSet=dwelling-db-shard-0&authSource=admin&retryWrites=true&w=majority"
     busStops = []
 
     # Pass connection to the pymongo instance.
@@ -126,7 +133,8 @@ def busStopsCity(city):
 @app.route("/rrs/<city>")
 def trainStopsCity(city):
     # Create connection variable
-    conn2 = 'mongodb://localhost:27017'
+    # conn2 = 'mongodb://localhost:27017'
+    conn2 = f"mongodb://heroku_app:{dbkey}@dwelling-db-shard-00-00-yfzol.gcp.mongodb.net:27017,dwelling-db-shard-00-01-yfzol.gcp.mongodb.net:27017,dwelling-db-shard-00-02-yfzol.gcp.mongodb.net:27017/test?ssl=true&replicaSet=dwelling-db-shard-0&authSource=admin&retryWrites=true&w=majority"
     trainStops = []
 
     # Pass connection to the pymongo instance.
@@ -141,7 +149,8 @@ def trainStopsCity(city):
 @app.route("/walkScore")
 def walkScores():
     # Create connection variable
-    conn2 = 'mongodb://localhost:27017'
+    # conn2 = 'mongodb://localhost:27017'
+    conn2 = f"mongodb://heroku_app:{dbkey}@dwelling-db-shard-00-00-yfzol.gcp.mongodb.net:27017,dwelling-db-shard-00-01-yfzol.gcp.mongodb.net:27017,dwelling-db-shard-00-02-yfzol.gcp.mongodb.net:27017/test?ssl=true&replicaSet=dwelling-db-shard-0&authSource=admin&retryWrites=true&w=majority"
     listings = []
 
     # Pass connection to the pymongo instance.
@@ -149,10 +158,25 @@ def walkScores():
 
     # Connect to a database. Will create one if not already available.
     db2 = client2.Dwelling_db
-    walkScores = [doc for doc in db2.WalkScore.find({}, {'_id':False})] 
+    walkScore = [doc for doc in db2.WalkScore.find({}, {'_id':False})] 
     
-    return jsonify(walkScores)
+    return jsonify(walkScore)
 
+@app.route("/eduScore")
+def eduScores():
+    # Create connection variable
+    # conn2 = 'mongodb://localhost:27017'
+    conn2 = f"mongodb://heroku_app:{dbkey}@dwelling-db-shard-00-00-yfzol.gcp.mongodb.net:27017,dwelling-db-shard-00-01-yfzol.gcp.mongodb.net:27017,dwelling-db-shard-00-02-yfzol.gcp.mongodb.net:27017/test?ssl=true&replicaSet=dwelling-db-shard-0&authSource=admin&retryWrites=true&w=majority"
+    listings = []
+
+    # Pass connection to the pymongo instance.
+    client2 = pymongo.MongoClient(conn2)
+
+    # Connect to a database. Will create one if not already available.
+    db2 = client2.Dwelling_db
+    eduScore = [doc for doc in db2.EduScore.find({}, {'_id':False})] 
+    
+    return jsonify(eduScore)
 
 if __name__ == "__main__":
     app.run(debug=True)
