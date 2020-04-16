@@ -302,7 +302,7 @@ function clearHeatMaps() {
 //   SCALE HEATMAP INTENSITY FUNCTION
 //***************************************
 function scaleIntensity(val, mult) {
-  switch (mult) {
+  switch (parseInt(mult)) {
     case 0:
       return 0;
     case 1:
@@ -326,7 +326,7 @@ function scaleIntensity(val, mult) {
     case 10:
       return (val - 250) * mult;
     default:
-      return val;
+      return 0;
   }
 
 }
@@ -336,110 +336,34 @@ function scaleIntensity(val, mult) {
 //       DRAW HEATMAPS FUNCTION
 //***************************************
 function drawHeatMaps() {
-
+  clearHeatMaps()
   var walkMult = d3.select("#Walkability").property('value')
   var eduMult = d3.select("#Education").property('value')
   var safeMult = d3.select("#Safety").property('value')
   var actMult = d3.select("#Activities").property('value')
   var tranMult = d3.select("#Transportation").property('value')
   var blur = 5
-  var total = scaleIntensity(500,walkMult) + scaleIntensity(500,eduMult) + scaleIntensity(500,safeMult) + scaleIntensity(500,actMult) + scaleIntensity(500,tranMult)
+  var total = scaleIntensity(500, walkMult) + scaleIntensity(500, eduMult) + scaleIntensity(500, safeMult) + scaleIntensity(500, actMult) + scaleIntensity(500, tranMult)
+  if (total > 0) {
 
-  d3.json("/heat", function (response) {
-    var heatArray = [];
-    for (var i = 0; i < response.length; i++) {
-      var latitude = parseFloat(response[i].Latitude);
-      var longitude = parseFloat(response[i].Longitude);
-      var intensity = (scaleIntensity(parseFloat(response[i].WalkScore), walkMult) + scaleIntensity(parseFloat(response[i].EDUScore), eduMult) + scaleIntensity(parseFloat(response[i].CrimeScore), safeMult) + scaleIntensity(parseFloat(response[i].ActivityScore), actMult) + scaleIntensity(parseFloat(response[i].TransitScore), tranMult));
-      
-      if (latitude) {
-        heatArray.push([latitude, longitude, intensity]);
+    d3.json("/heat", function (response) {
+      var heatArray = [];
+      for (var i = 0; i < response.length; i++) {
+        var latitude = parseFloat(response[i].Latitude);
+        var longitude = parseFloat(response[i].Longitude);
+        var intensity = (scaleIntensity(parseFloat(response[i].WalkScore), walkMult) + scaleIntensity(parseFloat(response[i].EDUScore), eduMult) + scaleIntensity(parseFloat(response[i].CrimeScore), safeMult) + scaleIntensity(parseFloat(response[i].ActivityScore), actMult) + scaleIntensity(parseFloat(response[i].TransitScore), tranMult));
+
+        if (latitude) {
+          heatArray.push([latitude, longitude, intensity]);
+        }
       }
-    }
-    var heat = L.heatLayer(heatArray, {
-      radius: 2 * blur,
-      blur: 3 * blur
-    });
-    heat.addTo(layers.DwellHeat);
-  })
-
-  // d3.json("/walkScore", function (response) {
-  //   if (walkMult != 0) {
-  //     var heatArray = [];
-  //     for (var i = 0; i < response.length; i++) {
-  //       var latitude = parseFloat(response[i].Latitude);
-  //       var longitude = parseFloat(response[i].Longitude);
-  //       var intensity = scaleIntensity(parseFloat(response[i].Walkability), walkMult);
-  //       if (latitude) {
-  //         heatArray.push([latitude, longitude, intensity]);
-  //       }
-  //     }
-  //     var heat = L.heatLayer(heatArray, {
-  //       radius: 2 * walkMult,
-  //       blur: 3 * walkMult
-  //     });
-  //     heat.addTo(layers.DwellHeat);
-  //   }
-  // })
-
-  // d3.json("/actScore", function (response) {
-  //   if (actMult != 0) {
-  //     var heatArray = [];
-  //     for (var i = 0; i < response.length; i++) {
-  //       var coord = response[i].latlng
-  //       var latitude = coord.split(',')[0];
-  //       var longitude = coord.split(',')[1];
-  //       var intensity = scaleIntensity(parseFloat(response[i].activityScore), actMult);
-  //       if (latitude) {
-  //         heatArray.push([latitude, longitude, intensity]);
-  //       }
-  //     }
-  //     var heat = L.heatLayer(heatArray, {
-  //       radius: 2 * actMult,
-  //       blur: 3 * actMult
-  //     });
-  //     heat.addTo(layers.DwellHeat);
-  //   }
-  // })
-
-  // d3.json("/eduScore", function (response) {
-  //   if (eduMult != 0) {
-  //     var heatArray = [];
-  //     for (var i = 0; i < response.length; i++) {
-  //       var latitude = parseFloat(response[i].Latitude);
-  //       var longitude = parseFloat(response[i].Longitude);
-  //       var intensity = scaleIntensity(parseFloat(response[i].EduScore), eduMult);
-  //       if (latitude) {
-  //         heatArray.push([latitude, longitude, intensity]);
-  //       }
-  //     }
-  //     var heat = L.heatLayer(heatArray, {
-  //       radius: 2 * eduMult,
-  //       blur: 3 * eduMult
-  //     });
-  //     heat.addTo(layers.DwellHeat);
-  //   }
-  // })
-
-  // d3.json("/crimeScore", function (response) {
-  //   if (safeMult != 0) {
-  //     var heatArray = [];
-  //     for (var i = 0; i < response.length; i++) {
-  //       var latitude = parseFloat(response[i].Latitude);
-  //       var longitude = parseFloat(response[i].Longitude);
-  //       var intensity = scaleIntensity(parseFloat(response[i]["2018"]), safeMult);
-  //       if (latitude) {
-  //         heatArray.push([latitude, longitude, intensity]);
-  //       }
-  //     }
-  //     var heat = L.heatLayer(heatArray, {
-  //       radius: 2 * safeMult,
-  //       blur: 3 * safeMult
-  //     });
-  //     heat.addTo(layers.DwellHeat);
-  //   }
-  // })
-
+      var heat = L.heatLayer(heatArray, {
+        radius: 2 * blur,
+        blur: 3 * blur
+      });
+      heat.addTo(layers.DwellHeat);
+    })
+  }
 }
 
 //***************************************
