@@ -181,7 +181,6 @@ var icons = {
 
 
 
-
 //***************************************
 // DRAW MUNICIPALITIES WITH CLICK LINKS
 //***************************************
@@ -209,20 +208,10 @@ function drawMunicipalities() {
             'lat': a.geometry.coordinates[0][0][1],
             'lon': a.geometry.coordinates[0][0][0]
           }
-          map.flyTo(coord, 13);
+          map.flyTo(coord, 12);
           addMarkers(parseInt(a.properties.MUN_CODE));
         })
-        b.bindPopup(`<H3>${a.properties.NAME}</H3><BR><H4>MUNID:${a.properties.MUN_CODE}</H4>`).on('popupclose', function () {
-          clearMarkers();
-          var coord = {
-            'lat': "40.0583",
-            'lon': "-74.4057"
-          }
-          map.flyTo(coord, 8);
-          // var sel = document.getElementById('City');
-          // sel.selectedIndex = 0;
-          drawHeatMaps()
-        })
+        b.bindPopup(`<H3>${a.properties.NAME}</H3><BR><H4>MUNID:${a.properties.MUN_CODE}</H4>`)
       }
 
     }).addTo(layers["Munis"]);
@@ -236,26 +225,15 @@ function drawMunicipalities() {
 //***************************************
 
 function addMarkers(searchMuni) {
-  console.log(searchMuni)
+  // console.log(searchMuni)
   // clearMarkers();
   clearHeatMaps()
 
-  // searchURL = `/bs/${searchMuni}`;
-  // d3.json(searchURL, function (response) {
-  //   current_layer = "BusStops";
-  //   for (var i = 0; i < response.length; i++) {
-  //     var latitude = parseFloat(response[i].stop_lat);
-  //     var longitude = parseFloat(response[i].stop_lon);
-  //     if (latitude) {
-  //       L.marker([latitude, longitude], { icon: icons[current_layer] }).addTo(layers[current_layer]).bindPopup("Stop: " + response[i].stop_name);
-  //     }
-  //   }
-  // });
 
-  searchURL = `/rrs/${searchMuni}`;
-  console.log(searchURL)
+
+  searchURL = `/bs/${searchMuni}`;
   d3.json(searchURL, function (response) {
-    current_layer = "TrainStop";
+    current_layer = "BusStops";
     for (var i = 0; i < response.length; i++) {
       var latitude = parseFloat(response[i].stop_lat);
       var longitude = parseFloat(response[i].stop_lon);
@@ -265,17 +243,32 @@ function addMarkers(searchMuni) {
     }
   });
 
-  // searchURL = `/hs/${searchMuni}`;
-  // d3.json(searchURL, function (response) {
-  //   current_layer = "Schools";
-  //   for (var i = 0; i < response.length; i++) {
-  //     var latitude = parseFloat(response[i].Latitude);
-  //     var longitude = parseFloat(response[i].Longitude);
-  //     if (latitude) {
-  //       L.marker([latitude, longitude], { icon: icons[current_layer] }).addTo(layers[current_layer]).bindPopup("School: " + response[i].School + "<BR />Rank: " + response[i].Rank);
-  //     }
-  //   }
-  // });
+  searchURL = `/rrs/${searchMuni}`;
+  console.log(searchURL)
+  d3.json(searchURL, function (error, reT) {
+    if (error) return console.info(error);
+    console.log(reT)
+    current_layer = "TrainStop";
+    for (var i = 0; i < reT.length; i++) {
+      var latitude = parseFloat(reT[i].stop_lat);
+      var longitude = parseFloat(reT[i].stop_lon);
+      if (latitude) {
+        L.marker([latitude, longitude], { icon: icons[current_layer] }).addTo(layers[current_layer]).bindPopup("Stop: " + reT[i].stop_name);
+      }
+    }
+  });
+
+  searchURL = `/hs/${searchMuni}`;
+  d3.json(searchURL, function (response) {
+    current_layer = "Schools";
+    for (var i = 0; i < response.length; i++) {
+      var latitude = parseFloat(response[i].Latitude);
+      var longitude = parseFloat(response[i].Longitude);
+      if (latitude) {
+        L.marker([latitude, longitude], { icon: icons[current_layer] }).addTo(layers[current_layer]).bindPopup("School: " + response[i].School + "<BR />Rank: " + response[i].Rank);
+      }
+    }
+  });
 }
 
 //***************************************
@@ -285,6 +278,7 @@ function clearMarkers() {
   layers.TrainStop.clearLayers();
   layers.Schools.clearLayers();
   layers.BusStops.clearLayers();
+
 }
 
 function clearHeatMaps() {
@@ -442,6 +436,16 @@ d3.select("#DwellMe")
     // safeHeat(eval(d3.select("#Safety").property('value')))
     drawHeatMaps();
   })
+d3.select("#resetMap")
+  .on("click", function () {
+    clearMarkers();
+    var coord = {
+      'lat': "40.0583",
+      'lon': "-74.4057"
+    }
+    map.flyTo(coord, 8);
+    drawHeatMaps()
+  })
 
 // CitySelect = d3.select("#City");
 // CitySelect.on("change", function () {
@@ -468,3 +472,7 @@ d3.select("#DwellMe")
 // resetPress.on("click", function () {
 //   init();
 // });
+
+//***************************************
+// RESET THE MAP TO ORIGINAL ZOOM
+//***************************************
