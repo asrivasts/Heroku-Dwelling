@@ -306,47 +306,58 @@ function resetMap(){
 //       POPULATE TABLE
 //***************************************
 function drawTable(data) {
-  console.log("Here")
-  console.log(data.length)
-  var dt = d3.select("#DwellingTable");
-  dt.html("");
-  var newTable = dt.append("table").attr("class", "table table-striped table-hover").attr("id", "Dwelling-Ranking");
-  var newtHead = newTable.append("thead");
-  var theadrow = newtHead.append("tr");
-  theadrow.append("th").attr("class", "table-head").text("Municipality");
-  theadrow.append("th").attr("class", "table-head").text("County");
-  theadrow.append("th").attr("class", "table-head").text("Municipality ID");
-  theadrow.append("th").attr("class", "table-head").text("Latitude");
-  theadrow.append("th").attr("class", "table-head").text("Longitude");
-  theadrow.append("th").attr("class", "table-head").text("Education");
-  theadrow.append("th").attr("class", "table-head").text("Transit");
-  theadrow.append("th").attr("class", "table-head").text("Walkability");
-  theadrow.append("th").attr("class", "table-head").text("Safety");
-  theadrow.append("th").attr("class", "table-head").text("Activities");
-  theadrow.append("th").attr("class", "table-head").text("DwellScore");
-  var tbody = newTable.append("tbody");
-
-
-  var sortedList = data.sort((a, b) => (a.DwellScore < b.DwellScore) ? 1 : -1);
-  console.log(sortedList.length)
-  var count = 0;
-  sortedList.forEach(function (value) {
-    if(count<30){
-    var row = tbody.append("tr")
-    row.append("th").text(value.Municipalty)
-    row.append("td").text(value.County)
-    row.append("td").text(value.MUNID)
-    row.append("td").text(value.Latitude)
-    row.append("td").text(value.Longitude)
-    row.append("td").text(value.Education)
-    row.append("td").text(value.Transit)
-    row.append("td").text(value.Walkability)
-    row.append("td").text(value.Safety)
-    row.append("td").text(value.Activities)
-    row.append("td").text(value.DwellScore)
-    count+=1;
-    }
+  d3.json("/dscore", function(result){
+    var count = 0;
+    var sortedList = data.sort((a, b) => (a.DwellScore < b.DwellScore) ? 1 : -1);
+    sortedList.forEach(function (value) {
+      var dCat = "Sign up for Premium"
+      for (var i=0; i< result.length; i++){
+        if (result[i].MUNID == value.MUNID){
+          dCat=result[i]["Price Category"]
+        }
+      }
+      value["DCat"] = dCat;
+    })
+    var dt = d3.select("#DwellingTable");
+    dt.html("");
+    var newTable = dt.append("table").attr("class", "table table-striped table-hover").attr("id", "Dwelling-Ranking");
+    var newtHead = newTable.append("thead");
+    var theadrow = newtHead.append("tr");
+    theadrow.append("th").attr("class", "table-head").text("Municipality");
+    theadrow.append("th").attr("class", "table-head").text("County");
+    theadrow.append("th").attr("class", "table-head").text("Municipality ID");
+    theadrow.append("th").attr("class", "table-head").text("Latitude");
+    theadrow.append("th").attr("class", "table-head").text("Longitude");
+    theadrow.append("th").attr("class", "table-head").text("Education");
+    theadrow.append("th").attr("class", "table-head").text("Transit");
+    theadrow.append("th").attr("class", "table-head").text("Walkability");
+    theadrow.append("th").attr("class", "table-head").text("Safety");
+    theadrow.append("th").attr("class", "table-head").text("Activities");
+    theadrow.append("th").attr("class", "table-head").text("DwellScore");
+    theadrow.append("th").attr("class", "table-head").text("Dwelling Category");
+    var tbody = newTable.append("tbody");
+    console.log(sortedList.length)
+    sortedList.forEach(function (value) {
+      if(count<30){
+      var row = tbody.append("tr")
+      row.append("th").text(value.Municipalty)
+      row.append("td").text(value.County)
+      row.append("td").text(value.MUNID)
+      row.append("td").text(value.Latitude)
+      row.append("td").text(value.Longitude)
+      row.append("td").text(value.Education)
+      row.append("td").text(value.Transit)
+      row.append("td").text(value.Walkability)
+      row.append("td").text(value.Safety)
+      row.append("td").text(value.Activities)
+      row.append("td").text(value.DwellScore)
+      row.append("td").text(value.DCat)
+      count+=1;
+      }
+    })
   })
+
+
 }
 
 
@@ -524,14 +535,7 @@ d3.select("#Activities")
 
 d3.select("#DwellMe")
   .on("click", function () {
-    clearHeatMaps();
-    // d3.select("#actVal").text(eval(d3.select(this).property('value')))
-    // walkHeat(eval(d3.select("#Walkability").property('value')))
-    // hsHeat(eval(d3.select("#Education").property('value')))
-    // travelHeat(eval(d3.select("#Transportation").property('value')))
-    // actHeat(eval(d3.select("#Activities").property('value')))
-    // safeHeat(eval(d3.select("#Safety").property('value')))
-    drawHeatMaps();
+    resetMap()
   })
 
   
